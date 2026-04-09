@@ -1,0 +1,478 @@
+================================================================================
+                    RANK 3 - CODE DOCUMENTATION / KOD DOKÜMANTASYONU
+================================================================================
+
+
+################################################################################
+#  LEVEL 1 - FILTER                                                            #
+################################################################################
+
+========================== ENGLISH ==========================
+
+FILTER - Censoring a word from stdin
+
+PURPOSE:
+  This program reads text from standard input (stdin) and replaces every
+  occurrence of a given word (passed as argument) with '*' characters,
+  then prints the result to stdout.
+
+HOW IT WORKS (Step by Step):
+
+1. ARGUMENT CHECK (main, line 16-17):
+   - The program checks if exactly one argument is provided (ac != 2).
+   - If not, it returns 1 (error).
+
+2. BUFFER ALLOCATION (main, line 18-23):
+   - A large buffer (1 MB) is allocated using calloc.
+   - calloc initializes all bytes to 0, so the buffer is a valid empty string.
+   - If allocation fails, it prints an error with perror and returns 1.
+
+3. READING STDIN (main, line 24-30):
+   - The program reads stdin one character at a time using read().
+   - Each character is stored in the buffer sequentially.
+   - Reading continues until read() returns 0 (EOF) or less.
+
+4. CENSORING / REPLACEMENT (main, line 31-41):
+   - The program iterates through the buffer character by character.
+   - At each position, it calls ft_strnchr() to check if the substring
+     starting at that position matches the argument string av[1].
+   - ft_strnchr() compares characters one by one for 'len' characters.
+     It returns 1 if all characters match, 0 otherwise.
+   - If a match is found, the matched characters are replaced with '*'.
+     The index is advanced by the length of the match.
+   - If no match is found, the index advances by 1.
+
+5. OUTPUT (main, line 42-44):
+   - The modified buffer is printed with printf.
+   - The buffer is freed and the program returns 0.
+
+KEY FUNCTION - ft_strnchr(s1, s2, len):
+   - Compares 'len' characters of s1 and s2.
+   - Returns 1 if they are identical for 'len' characters.
+   - Returns 0 if any mismatch or null terminator is encountered early.
+
+EXAMPLE:
+   echo 'abcdefgaaaabcdefabc' | ./filter abc
+   Output: ***defgaaa***def***
+   ("abc" occurrences are replaced with "***")
+
+
+========================== TÜRKÇE ==========================
+
+FILTER - Stdin'den okunan metinde bir kelimeyi sansürleme
+
+AMAÇ:
+  Bu program standart girişten (stdin) metin okur ve argüman olarak verilen
+  kelimenin her geçtiği yeri '*' karakterleriyle değiştirip sonucu stdout'a
+  yazdırır.
+
+ÇALIŞMA MANTIĞI (Adım Adım):
+
+1. ARGÜMAN KONTROLÜ (main, satır 16-17):
+   - Program tam olarak bir argüman verilip verilmediğini kontrol eder (ac != 2).
+   - Verilmemişse 1 (hata) döndürür.
+
+2. BUFFER TAHSİSİ (main, satır 18-23):
+   - calloc ile büyük bir buffer (1 MB) tahsis edilir.
+   - calloc tüm baytları 0'a ayarlar, böylece buffer geçerli bir boş string olur.
+   - Tahsis başarısız olursa perror ile hata yazdırılır ve 1 döndürülür.
+
+3. STDIN'DEN OKUMA (main, satır 24-30):
+   - Program stdin'den read() ile her seferinde bir karakter okur.
+   - Her karakter sırayla buffer'a yazılır.
+   - read() 0 (EOF) veya daha az döndürene kadar okuma devam eder.
+
+4. SANSÜRLEME / DEĞİŞTİRME (main, satır 31-41):
+   - Program buffer'ı karakter karakter dolaşır.
+   - Her pozisyonda ft_strnchr() fonksiyonunu çağırarak o pozisyondan
+     başlayan alt stringin argüman string'i av[1] ile eşleşip eşleşmediğini
+     kontrol eder.
+   - ft_strnchr() karakterleri 'len' kadar tek tek karşılaştırır.
+     Hepsi eşleşirse 1, aksi halde 0 döndürür.
+   - Eşleşme bulunursa, eşleşen karakterler '*' ile değiştirilir.
+     İndeks eşleşme uzunluğu kadar ilerletilir.
+   - Eşleşme bulunamazsa indeks 1 ilerler.
+
+5. ÇIKTIŞ (main, satır 42-44):
+   - Değiştirilmiş buffer printf ile yazdırılır.
+   - Buffer serbest bırakılır (free) ve program 0 döndürür.
+
+ÖNEMLİ FONKSİYON - ft_strnchr(s1, s2, len):
+   - s1 ve s2'nin 'len' karakterini karşılaştırır.
+   - 'len' karakter boyunca aynıysa 1 döndürür.
+   - Herhangi bir uyumsuzluk veya erken null terminator varsa 0 döndürür.
+
+ÖRNEK:
+   echo 'abcdefgaaaabcdefabc' | ./filter abc
+   Çıktı: ***defgaaa***def***
+   ("abc" geçişleri "***" ile değiştirilir)
+
+
+################################################################################
+#  LEVEL 2 - POWERSET                                                          #
+################################################################################
+
+========================== ENGLISH ==========================
+
+POWERSET - Finding subsets that sum to a target
+
+PURPOSE:
+  Given a target integer n and a set of integers, the program finds and prints
+  all subsets whose elements sum up to n.
+
+HOW IT WORKS (Step by Step):
+
+1. ARGUMENT CHECK (main, line 49-50):
+   - If fewer than 2 arguments are provided, the program returns 1.
+
+2. SETUP (powerset function, line 28-45):
+   - av[1] is converted to an integer -> this is the target sum.
+   - The remaining arguments (av[2], av[3], ...) are the set of integers.
+   - Two arrays are allocated:
+     * nums[]: stores the set of integers
+     * sub[]: temporary array to build current subset
+
+3. RECURSIVE SEARCH (find_subsets function, line 5-24):
+   - This is a backtracking/recursive function with parameters:
+     * nums: the original set of numbers
+     * sub: current subset being built
+     * count: total number of elements in the set
+     * sub_size: current size of the subset being built
+     * pos: current position in nums (to avoid going backwards)
+     * sum: running sum of the current subset
+     * target: the desired sum
+
+   - BASE CASE: If sum == target, print all elements of the current subset.
+   - RECURSIVE CASE: Starting from position 'pos', try adding each remaining
+     element to the subset and recurse with:
+       - sub_size + 1 (one more element in subset)
+       - pos + 1 (move forward to avoid duplicates)
+       - sum + nums[pos] (update running sum)
+   - The loop naturally handles "not including" an element by moving pos forward.
+
+4. WHY IT WORKS:
+   - By always moving forward (pos + 1), we never revisit earlier elements,
+     which prevents duplicate subsets.
+   - The recursion explores all possible combinations of elements from left
+     to right, checking if each combination sums to the target.
+   - Note: The empty subset (sum = 0) is checked implicitly at the start.
+
+EXAMPLE:
+   ./powerset 3 1 0 2 4 5 3
+   Output:
+   3
+   0 3
+   1 2
+   1 0 2
+
+
+========================== TÜRKÇE ==========================
+
+POWERSET - Hedef toplamı veren alt kümeleri bulma
+
+AMAÇ:
+  Bir hedef tam sayı n ve bir tam sayı kümesi verildiğinde, program elemanları
+  toplamı n olan tüm alt kümeleri bulur ve yazdırır.
+
+ÇALIŞMA MANTIĞI (Adım Adım):
+
+1. ARGÜMAN KONTROLÜ (main, satır 49-50):
+   - 2'den az argüman verilmişse program 1 döndürür.
+
+2. HAZIRLIK (powerset fonksiyonu, satır 28-45):
+   - av[1] tam sayıya dönüştürülür -> bu hedef toplamdır.
+   - Kalan argümanlar (av[2], av[3], ...) tam sayı kümesidir.
+   - İki dizi tahsis edilir:
+     * nums[]: tam sayı kümesini saklar
+     * sub[]: o anki alt kümeyi oluşturmak için geçici dizi
+
+3. REKÜRSİF ARAMA (find_subsets fonksiyonu, satır 5-24):
+   - Bu bir backtracking/rekürsif fonksiyondur. Parametreleri:
+     * nums: orijinal sayı kümesi
+     * sub: oluşturulmakta olan mevcut alt küme
+     * count: kümedeki toplam eleman sayısı
+     * sub_size: oluşturulan alt kümenin mevcut boyutu
+     * pos: nums'daki mevcut konum (geriye gitmemek için)
+     * sum: mevcut alt kümenin toplam değeri
+     * target: istenen toplam
+
+   - TEMEL DURUM: sum == target ise, mevcut alt kümenin tüm elemanları yazdırılır.
+   - REKÜRSİF DURUM: 'pos' pozisyonundan başlayarak, kalan her elemanı
+     alt kümeye eklemeyi deneyerek şunlarla rekürsif çağrı yapılır:
+       - sub_size + 1 (alt kümede bir eleman daha)
+       - pos + 1 (tekrarları önlemek için ileri git)
+       - sum + nums[pos] (toplam değeri güncelle)
+   - Döngü, pos'u ileri taşıyarak bir elemanı "dahil etmemeyi" doğal
+     olarak yönetir.
+
+4. NEDEN ÇALIŞIR:
+   - Her zaman ileri giderek (pos + 1) daha önceki elemanlara dönülmez,
+     bu da tekrar alt kümeleri önler.
+   - Rekürsyon, soldan sağa tüm olası eleman kombinasyonlarını araştırır
+     ve her kombinasyonun hedefe ulaşıp ulaşmadığını kontrol eder.
+   - Not: Boş alt küme (toplam = 0) başlangıçta dolaylı olarak kontrol edilir.
+
+ÖRNEK:
+   ./powerset 3 1 0 2 4 5 3
+   Çıktı:
+   3
+   0 3
+   1 2
+   1 0 2
+
+
+################################################################################
+#  LEVEL 2 - RIP (Remove Invalid Parentheses)                                 #
+################################################################################
+
+========================== ENGLISH ==========================
+
+RIP - Remove minimum parentheses to make expression balanced
+
+PURPOSE:
+  Given a string containing only parentheses, the program removes (replaces
+  with spaces) the minimum number of parentheses to make the expression
+  balanced, and prints all possible solutions.
+
+HOW IT WORKS (Step by Step):
+
+1. ARGUMENT CHECK (main, line 48-49):
+   - Exactly one argument must be provided, otherwise return 1.
+
+2. COUNTING INVALID PARENTHESES - ft_valid(s) (line 3-19):
+   - This function counts how many parentheses need to be removed.
+   - It uses two counters: 'open' and 'close'.
+   - Iterates through the string:
+     * '(' -> increment 'open' (unmatched opening parenthesis)
+     * ')' -> if there's an unmatched '(' (open > 0), decrement 'open'
+              (this ')' matches with a '(')
+              otherwise, increment 'close' (unmatched closing parenthesis)
+   - Returns open + close = total number of unmatched/invalid parentheses.
+   - When the return value is 0, the string is balanced.
+
+3. RECURSIVE REMOVAL - rip(s, must_fix, fix, i) (line 21-44):
+   Parameters:
+     - s: the string being modified
+     - must_fix: total number of parentheses that must be removed
+     - fix: number of parentheses removed so far
+     - i: current index in the string
+
+   - BASE CASE: If fix == must_fix (removed enough parentheses) AND
+     ft_valid(s) == 0 (string is now balanced), print the string with puts().
+   - PRUNING: If fix > must_fix, return immediately (removed too many).
+   - RECURSIVE CASE: Starting from index i, scan through the string.
+     For each parenthesis character found:
+       a) Replace it with a space (s[i] = ' ')
+       b) Recurse with fix + 1 and i + 1
+       c) Restore the original character (backtracking: s[i] = c)
+     Then continue to the next character.
+
+4. CALLING (main, line 50):
+   - rip(av[1], ft_valid(av[1]), 0, 0)
+   - Starts with 0 fixes done, at index 0.
+   - must_fix is pre-calculated as the minimum removals needed.
+
+5. WHY IT WORKS:
+   - ft_valid() precisely calculates the minimum number of removals needed.
+   - The recursion tries all combinations of removing exactly that many
+     parentheses.
+   - After each combination, ft_valid() verifies the result is balanced.
+   - Backtracking (restoring characters) ensures all combinations are explored.
+
+EXAMPLE:
+   ./rip '( ( )'
+   Output:
+   _ ( )
+   ( _ )
+   (where _ represents a space - one '(' is removed to balance)
+
+
+========================== TÜRKÇE ==========================
+
+RIP - İfadeyi dengelemek için minimum parantez kaldırma
+
+AMAÇ:
+  Sadece parantez içeren bir string verildiğinde, program ifadeyi dengelemek
+  için minimum sayıda parantezi kaldırır (boşlukla değiştirir) ve tüm olası
+  çözümleri yazdırır.
+
+ÇALIŞMA MANTIĞI (Adım Adım):
+
+1. ARGÜMAN KONTROLÜ (main, satır 48-49):
+   - Tam olarak bir argüman verilmelidir, aksi halde 1 döndürülür.
+
+2. GEÇERSİZ PARANTEZLERİ SAYMA - ft_valid(s) (satır 3-19):
+   - Bu fonksiyon kaç parantezin kaldırılması gerektiğini sayar.
+   - İki sayaç kullanır: 'open' ve 'close'.
+   - String'i dolaşır:
+     * '(' -> 'open' artır (eşleşmemiş açma parantezi)
+     * ')' -> eşleşmemiş bir '(' varsa (open > 0), 'open' azalt
+              (bu ')' bir '(' ile eşleşir)
+              yoksa, 'close' artır (eşleşmemiş kapama parantezi)
+   - open + close = toplam eşleşmemiş/geçersiz parantez sayısını döndürür.
+   - Döndürülen değer 0 olduğunda string dengelidir.
+
+3. REKÜRSİF KALDIRMA - rip(s, must_fix, fix, i) (satır 21-44):
+   Parametreler:
+     - s: değiştirilen string
+     - must_fix: kaldırılması gereken toplam parantez sayısı
+     - fix: şu ana kadar kaldırılan parantez sayısı
+     - i: string'deki mevcut indeks
+
+   - TEMEL DURUM: fix == must_fix (yeterli parantez kaldırıldı) VE
+     ft_valid(s) == 0 (string artık dengeli) ise, puts() ile string yazdırılır.
+   - BUDAMA: fix > must_fix ise, hemen geri dön (çok fazla kaldırıldı).
+   - REKÜRSİF DURUM: İndeks i'den başlayarak string'i tara.
+     Bulunan her parantez karakteri için:
+       a) Boşlukla değiştir (s[i] = ' ')
+       b) fix + 1 ve i + 1 ile rekürsif çağrı yap
+       c) Orijinal karakteri geri yükle (backtracking: s[i] = c)
+     Sonra bir sonraki karaktere geç.
+
+4. ÇAĞRI (main, satır 50):
+   - rip(av[1], ft_valid(av[1]), 0, 0)
+   - 0 düzeltme yapılmış, indeks 0'dan başlar.
+   - must_fix, gereken minimum kaldırma sayısı olarak önceden hesaplanır.
+
+5. NEDEN ÇALIŞIR:
+   - ft_valid() gereken minimum kaldırma sayısını tam olarak hesaplar.
+   - Rekürsyon, tam o kadar parantezi kaldırmanın tüm kombinasyonlarını dener.
+   - Her kombinasyondan sonra ft_valid() sonucun dengeli olduğunu doğrular.
+   - Backtracking (karakterleri geri yükleme) tüm kombinasyonların
+     araştırılmasını sağlar.
+
+ÖRNEK:
+   ./rip '( ( )'
+   Çıktı:
+   _ ( )
+   ( _ )
+   (_ boşluğu temsil eder - dengelemek için bir '(' kaldırılır)
+
+
+################################################################################
+#  LEVEL 2 - PERM (Permutations)                                              #
+################################################################################
+
+========================== ENGLISH ==========================
+
+PERM - Generate all permutations of a string in alphabetical order
+
+PURPOSE:
+  Given a string as argument, the program prints all possible permutations
+  of that string in alphabetical (lexicographic) order.
+
+HOW IT WORKS (Step by Step):
+
+1. ARGUMENT CHECK (main, line 50-51):
+   - Exactly one argument must be provided, otherwise return 1.
+
+2. HELPER FUNCTIONS:
+   - ft_strlen(s): Returns the length of a string by counting characters
+     until the null terminator.
+   - ft_swap(s1, s2): Swaps two characters in memory using a temporary variable.
+   - sort_str(str): Sorts a string using bubble sort algorithm.
+     It repeatedly passes through the string, swapping adjacent characters
+     that are out of order, until the string is sorted.
+
+3. RECURSIVE PERMUTATION - perm(str, start, end) (line 37-49):
+   Parameters:
+     - str: the string being permuted
+     - start: the current position to fix a character at
+     - end: the total length of the string
+
+   - BASE CASE: If start == end, all positions are fixed -> print the string.
+   - RECURSIVE CASE:
+     a) For each position i from 'start' to 'end-1':
+        - First, sort the substring from 'start' onwards (sort_str(str + start)).
+          This ensures we always try characters in alphabetical order.
+        - Swap str[start] with str[i] (fix character at position 'start').
+        - Recurse with start + 1 (fix the next position).
+        - Swap back (restore original order for backtracking).
+
+4. WHY SORTING IS KEY:
+   - Before each round of trying characters at a position, the remaining
+     substring is sorted.
+   - This guarantees that permutations are generated in lexicographic order.
+   - Without sorting, permutations would appear in an arbitrary order.
+
+5. ALGORITHM FLOW EXAMPLE (for "bca"):
+   - Sort entire string from start: "abc"
+   - Fix 'a' at position 0, recurse on "bc" -> "abc", "acb"
+   - Fix 'b' at position 0 (swap), recurse on "ac" -> "bac", "bca"
+   - Fix 'c' at position 0 (swap), recurse on "ab" -> "cab", "cba"
+   - Result: abc, acb, bac, bca, cab, cba (alphabetical order!)
+
+EXAMPLE:
+   ./perm abc
+   Output:
+   abc
+   acb
+   bac
+   bca
+   cab
+   cba
+
+
+========================== TÜRKÇE ==========================
+
+PERM - Bir string'in tüm permütasyonlarını alfabetik sırada üretme
+
+AMAÇ:
+  Argüman olarak verilen bir string'in tüm olası permütasyonlarını
+  alfabetik (leksikografik) sırada yazdırır.
+
+ÇALIŞMA MANTIĞI (Adım Adım):
+
+1. ARGÜMAN KONTROLÜ (main, satır 50-51):
+   - Tam olarak bir argüman verilmelidir, aksi halde 1 döndürülür.
+
+2. YARDIMCI FONKSİYONLAR:
+   - ft_strlen(s): Null terminatöre kadar karakter sayarak string'in
+     uzunluğunu döndürür.
+   - ft_swap(s1, s2): Geçici bir değişken kullanarak bellekte iki
+     karakteri yer değiştirir.
+   - sort_str(str): Bubble sort algoritması kullanarak bir string'i sıralar.
+     Sıra dışı bitişik karakterleri değiştirerek string sıralanana kadar
+     tekrar tekrar string üzerinden geçer.
+
+3. REKÜRSİF PERMÜTASYON - perm(str, start, end) (satır 37-49):
+   Parametreler:
+     - str: permüte edilen string
+     - start: bir karakterin sabitlenmesi gereken mevcut pozisyon
+     - end: string'in toplam uzunluğu
+
+   - TEMEL DURUM: start == end ise, tüm pozisyonlar sabitlenmiş -> string'i yazdır.
+   - REKÜRSİF DURUM:
+     a) 'start'tan 'end-1'e kadar her i pozisyonu için:
+        - Önce, 'start'tan sonraki alt string'i sırala (sort_str(str + start)).
+          Bu, karakterleri her zaman alfabetik sırada denememizi sağlar.
+        - str[start] ile str[i]'yi yer değiştir ('start' pozisyonuna karakter sabitle).
+        - start + 1 ile rekürsif çağrı yap (bir sonraki pozisyonu sabitle).
+        - Geri yer değiştir (backtracking için orijinal sırayı geri yükle).
+
+4. SIRALAMANIN ÖNEMİ:
+   - Bir pozisyonda karakter denemeden önce, kalan alt string sıralanır.
+   - Bu, permütasyonların leksikografik sırada üretilmesini garanti eder.
+   - Sıralama olmadan permütasyonlar rastgele bir sırada görünürdü.
+
+5. ALGORİTMA AKIŞ ÖRNEĞİ ("bca" için):
+   - Baştan itibaren tüm string'i sırala: "abc"
+   - 'a'yı pozisyon 0'a sabitle, "bc" üzerinde rekürsyon -> "abc", "acb"
+   - 'b'yi pozisyon 0'a sabitle (swap), "ac" üzerinde rekürsyon -> "bac", "bca"
+   - 'c'yi pozisyon 0'a sabitle (swap), "ab" üzerinde rekürsyon -> "cab", "cba"
+   - Sonuç: abc, acb, bac, bca, cab, cba (alfabetik sıra!)
+
+ÖRNEK:
+   ./perm abc
+   Çıktı:
+   abc
+   acb
+   bac
+   bca
+   cab
+   cba
+
+
+================================================================================
+                              END / SON
+================================================================================

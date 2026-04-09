@@ -1,65 +1,59 @@
-#include <unistd.h>
-#include <stdio.h>
+#include "permutations.h"
 
-// 1. Fonksiyon: İki karakterin yerini değiştirir
-void	swap(char *a, char *b)
+void	ft_swap(char *s1, char *s2)
 {
-	char temp = *a;
-	*a = *b;
-	*b = temp;
+	char	tmp = *s1;
+	*s1 = *s2;
+	*s2 = tmp;
 }
 
-// 2. Fonksiyon: String'i alfabetik sıraya dizer
-void	sort_str(char *s, int start)
+void	sort_str(char *str)
 {
-	int i, j;
+	int i = 0;
+	int j;
 
-	i = start;
-	while (s[i])
+	while (str[i])
 	{
 		j = i + 1;
-		while (s[j])
+		while (str[j])
 		{
-			if (s[i] > s[j])
-				swap(&s[i], &s[j]);
+			if (str[i] > str[j])
+				ft_swap(&str[i], &str[j]);
 			j++;
 		}
 		i++;
 	}
 }
 
-// 3. Fonksiyon: Permütasyonları üretir ve basar
-void	generate(char *s, int start, int len)
+void	perm(char *str, int start, int end)
 {
 	int i;
 
-	if (start == len)
+	if (start == end)
 	{
-		puts(s);
-		return;
+		puts(str);
+		return ;
 	}
 	i = start;
-	while (i < len)
+	while (i < end)
 	{
-		sort_str(s, start); // Her adımda alfabetik sırayı koru
-		swap(&s[start], &s[i]);
-		generate(s, start + 1, len);
-		swap(&s[start], &s[i]); // Backtrack
+		sort_str(str + start); // dizinin sonuna ulaştıysak tam dizine geldik
+		ft_swap(&str[start], &str[i]); // başlangıç poz getir
+		sort_str(str + start + 1); // sıradaki karakteri başlangııç poz getir
+		perm(str, start + 1, end); // karakteri başa sabitledikten sonra sonrakine geç
 		i++;
 	}
 }
 
-// 4. Fonksiyon: Ana giriş noktası
 int	main(int ac, char **av)
 {
 	int len = 0;
 
-	if (ac == 2)
-	{
-		while (av[1][len])
-			len++;
-		sort_str(av[1], 0);
-		generate(av[1], 0, len);
-	}
+	if (ac != 2)
+		return (0);
+	while (av[1][len]) // kullanıcının girdiği kelimenin uzunluğu
+		len++;
+	sort_str(av[1]); // ilk iş kelimeyi alfabetik olarak dizer
+	perm(av[1], 0, len);
 	return (0);
 }

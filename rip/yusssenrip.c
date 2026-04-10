@@ -1,5 +1,9 @@
 #include <stdio.h>
 
+
+//bu fonksiyonun amacı gelen stringteki parantezlerin hepsi kapanmış mı diye bakmak
+//kapanmamış varsa kaç adet kapanmamış olduğunu döndürmek
+//must_fix değerini en başta burdan alırız
 int	ft_valid(char *s)
 {
 	int	open = 0;
@@ -20,6 +24,21 @@ int	ft_valid(char *s)
 	}
 	return (open + close);
 }
+//(()) 
+//open = 1, close = 0
+//open = 2, close = 0
+//open = 3, close = 0
+//open = 2, close = 0
+//open = 1, close = 0
+
+//()))
+//open =1, close = 0
+//open = 0 , close = 0
+//open = 0, close = 1
+//open = 0, close 2
+
+// ))())) 
+
 
 void	rip(char *s, int must_fix, int fix, int i)
 {

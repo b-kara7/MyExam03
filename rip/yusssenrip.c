@@ -39,7 +39,6 @@ int	ft_valid(char *s)
 
 // ))())) 
 
-
 void	rip(char *s, int must_fix, int fix, int i)
 {
 	char	c;

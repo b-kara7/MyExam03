@@ -22,12 +22,6 @@ void	find_subsets(int *nums, int *sub, int count, int sub_size, int pos, int sum
 		pos++;
 	}
 }
-num[3] = 3, 2, 1      target = 6
-sub[0] = num[0]    sum = 0
-sub[1] = num[1]    sum = 3
-sub[2] = num[2]    sum = 5
-sub[3] = num[3]    sum =6
-
 
 void	powerset(int ac, char **av)
 {
@@ -64,5 +58,3 @@ int	main(int ac, char **av)
 	powerset(ac, av);
 	return (0);
 }
-
-./a.out 3 2 1 0

@@ -1,8 +1,5 @@
 
-#include <stdlib.h>
-#include <stdio.h>
-
-#define BUFFER_SIZE 10
+#include "get_next_line.h"
 
 char *ft_strchr(char *s, int c)
 {
